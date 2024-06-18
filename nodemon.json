@@ -1,0 +1,8 @@
+{
+  "restartable": "rs",
+  "verbose": true,
+  "watch": ["config/", "router/", "views/", "src/"],
+  "ignore": [".git", "node_modules/**/node_modules"],
+  "delay": "1000",
+  "ext": "ts ejs yml json js"
+}
