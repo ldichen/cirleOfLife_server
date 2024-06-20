@@ -17,21 +17,31 @@ const profileType = {
   4: "cycling",
 };
 
-const queryPolygon = (data) => {
-  //   console.log(data);
-  //   console.log(data["lon"]);
-  const url =
-    baseQueryUrl +
-    profileType[data["profile"]] +
-    "/" +
-    data["lon"] +
-    "%2C" +
-    data["lat"] +
-    "?contours_minutes=15&polygons=true&denoise=1&access_token=" +
-    ACCESS_TOKEN;
-  //   console.log(url);
-  axios.get(url).then((res) => {
-    console.log(res.data);
+const queryPolygon = async (data) => {
+  return new Promise((resolve, reject) => {
+    const url =
+      baseQueryUrl +
+      profileType[data["profile"]] +
+      "/" +
+      data["lon"] +
+      "%2C" +
+      data["lat"] +
+      "?contours_minutes=15&polygons=true&denoise=1&access_token=" +
+      ACCESS_TOKEN;
+
+    axios
+      .get(url)
+      .then((res) => {
+        console.log("res.data", res.data);
+        if (res.data != undefined) {
+          resolve(res.data); // 成功时将结果通过 resolve 返回
+        } else {
+          reject(new Error("Response data is undefined")); // 处理特定的错误情况
+        }
+      })
+      .catch((error) => {
+        reject(error); // 捕获并处理请求失败的情况
+      });
   });
 };
 

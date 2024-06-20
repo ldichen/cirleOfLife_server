@@ -2,7 +2,7 @@
  * @Description: 控制器-基础功能
  * @Author: DiChen Liu
  * @Date: 2024-05-11
- * @LastEditTime: 2024-05-11
+ * @LastEditTime: 2024-06-20 18:42:57
  */
 const { escape } = require("querystring");
 const BaseResult = require("../common/BaseResult.js");
@@ -10,8 +10,8 @@ const tdtAPI = require("../tdtAPI/tdtapi.js");
 const baseService = require("../services/baseService.js"); //服务基础类service
 //查询某一个点的范围
 const queryPoint = async (req, res) => {
-  let data = req.body;
-  console.log(data);
+  let data = req.query;
+  console.log("data", data);
   const { lon = "", lat = "", profile = "" } = data;
   try {
     if (!lon || !lat || !profile) {

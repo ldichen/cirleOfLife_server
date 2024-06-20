@@ -13,7 +13,9 @@ const queryPoint = async (data) => {
   try {
     const queryPolygonRes = await queryPolygon(data);
     // const res = await axios.get(tdtAPI.getPolygonQuery(point));
-    // return res;
+    if (queryPolygonRes != undefined) {
+      return queryPolygonRes;
+    }
   } catch (e) {
     console.log(e);
   }

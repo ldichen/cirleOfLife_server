@@ -35,6 +35,7 @@ class BaseResult {
     r.setMessage(BRC.UNKNOWN_ERROR.getMessage());
     r.setCode(BRC.UNKNOWN_ERROR.getCode());
     r.setTime(new Date().toLocaleString());
+
     return r;
   }
 
