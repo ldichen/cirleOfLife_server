@@ -2,7 +2,7 @@
  * @Description: 住宅区model
  * @Author: DiChen Liu
  * @Date: 2024-05-22
- * @LastEditTime: 2024-05-22
+ * @LastEditTime: 2024-07-03 15:53:41
  */
 const mongoose = require("mongoose");
 
