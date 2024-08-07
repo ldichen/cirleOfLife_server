@@ -2,7 +2,7 @@
  * @Description: 服务基础类
  * @Author: DiChen Liu
  * @Date: 2024-05-16
- * @LastEditTime: 2024-07-04 10:26:57
+ * @LastEditTime: 2024-07-19 15:59:45
  */
 const connectDB = require("../db/mongo.js");
 const Com = require("../models/comModel.js");
@@ -32,8 +32,9 @@ const queryPoint = async (data) => {
         },
       })
         .then((pois) => {
+          console.log("pois", pois);
           queryResult.pois = paraseGeojson(pois);
-          queryResult.types = countTypes(paraseGeojson(pois));
+          queryResult.types = countTypes(queryResult.pois);
         })
         .then((data) => {})
         .catch((err) => {
@@ -91,7 +92,6 @@ function countTypes(geojson) {
     total: 0,
     types: {},
   };
-  console.log("geojson", geojson);
   geojson.features.forEach((feature) => {
     counts.total += 1;
     const type = feature.properties.type;
@@ -109,18 +109,13 @@ function paraseGeojson(pois) {
   let geojson = {
     type: "FeatureCollection",
     features: pois.map((item) => ({
-      id: item.id,
+      id: item.NID,
       type: "Feature",
       geometry: item.location,
       properties: {
-        name: item.name,
+        name: item.NAME,
         type: item.type,
-        firstClass: item.firstClass,
-        secondClass: item.secondClass,
-        province: item.province,
-        city: item.city,
-        county: item.county,
-        id: item.id,
+        id: item.NID,
       },
     })),
   };
