@@ -2,7 +2,7 @@
  * @Description: mapboxAPI
  * @Author: DiChen Liu
  * @Date: 2024-05-27
- * @LastEditTime: 2024-05-27
+ * @LastEditTime: 2025-01-03 23:26:17
  */
 const axios = require("axios");
 //15min
@@ -32,7 +32,7 @@ const queryPolygon = async (data) => {
     axios
       .get(url)
       .then((res) => {
-        console.log("res.data", res.data);
+        // console.log("res.data", res.data);
         if (res.data != undefined) {
           resolve(res.data); // 成功时将结果通过 resolve 返回
         } else {

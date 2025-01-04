@@ -2,16 +2,18 @@
  * @Author: DiChen
  * @Date: 2024-07-03 10:48:18
  * @LastEditors: DiChen
- * @LastEditTime: 2024-07-19 15:59:34
+ * @LastEditTime: 2025-01-04 15:49:50
  */
 const mongoose = require("mongoose");
 
 // 定义 POI Schema
 const POISchema = new mongoose.Schema(
   {
-    NID: { type: Number, required: true },
-    NAME: { type: String, required: true },
+    id: { type: Number, required: true },
+    name: { type: String, required: true },
     type: { type: String, required: true },
+    firstClass: { type: String, required: true },
+    secondClass: { type: String, required: true },
     location: {
       type: {
         type: String,

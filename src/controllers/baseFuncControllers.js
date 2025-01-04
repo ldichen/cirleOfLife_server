@@ -2,23 +2,24 @@
  * @Description: 控制器-基础功能
  * @Author: DiChen Liu
  * @Date: 2024-05-11
- * @LastEditTime: 2024-07-03 16:18:36
+ * @LastEditTime: 2025-01-04 15:31:43
  */
 const { escape } = require("querystring");
 const BaseResult = require("../common/BaseResult.js");
 const tdtAPI = require("../tdtAPI/tdtapi.js");
 const baseService = require("../services/baseService.js"); //服务基础类service
 //查询某一个点的范围
+//并未设置calType传入
 const queryPoint = async (req, res) => {
   let data = req.query;
   console.log("data", data);
-  const { lon = "", lat = "", profile = "" } = data;
+  const { lon = "", lat = "", profile = "", calType = "0" } = data;
   try {
     if (!lon || !lat || !profile) {
       res.json(BaseResult.fail().Message("信息有误！"));
     } else {
       //这里写查询接口
-      let result = await baseService.queryPoint(data);
+      let result = await baseService.queryPoint(data, calType);
       res.json(BaseResult.success().Data(result));
     }
   } catch (e) {

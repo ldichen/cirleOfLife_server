@@ -2,24 +2,39 @@
  * @Description: 服务基础类
  * @Author: DiChen Liu
  * @Date: 2024-05-16
- * @LastEditTime: 2024-07-19 15:59:45
+ * @LastEditTime: 2025-01-04 15:51:41
  */
 const connectDB = require("../db/mongo.js");
 const Com = require("../models/comModel.js");
 const Scores = require("../models/comScores.js");
 const POI = require("../models/POIModel.js");
 const { queryPolygon } = require("../utils/mapboxAPI.js");
+const { MODEL_PATH, GEOJSON_PATH } = require("../config/config.default");
 //点查询poi
-const queryPoint = async (data) => {
+const queryPoint = async (data, calType) => {
   try {
     const queryResult = {
       polygon: null,
       pois: null,
       types: null,
     };
-    const queryPolygonRes = await queryPolygon(data);
+    let queryPolygonRes = null;
+    if (calType == "1") {
+      runPythonScript(data["lon"], data["lat"]).then(() => {
+        fs.readFile(GEOJSON_PATH, "utf8", (err, geoData) => {
+          if (err) {
+            console.error("Error reading the GeoJSON file:", err);
+            return;
+          }
+          queryPolygonRes = JSON.parse(geoData);
+        });
+      });
+    } else {
+      queryPolygonRes = await queryPolygon(data);
+    }
+
     queryResult.polygon = queryPolygonRes;
-    console.log("queryPolygonRes", queryPolygonRes.features[0].geometry);
+    // console.log("queryPolygonRes", queryPolygonRes.features[0].geometry);
     // const res = await axios.get(tdtAPI.getPolygonQuery(point));
     if (queryPolygonRes != undefined) {
       connectDB();
@@ -32,7 +47,7 @@ const queryPoint = async (data) => {
         },
       })
         .then((pois) => {
-          console.log("pois", pois);
+          console.log("pois", pois[1]);
           queryResult.pois = paraseGeojson(pois);
           queryResult.types = countTypes(queryResult.pois);
         })
@@ -40,7 +55,6 @@ const queryPoint = async (data) => {
         .catch((err) => {
           console.error(err);
         });
-
       return queryResult;
     }
   } catch (e) {
@@ -109,16 +123,42 @@ function paraseGeojson(pois) {
   let geojson = {
     type: "FeatureCollection",
     features: pois.map((item) => ({
-      id: item.NID,
+      id: item._id,
       type: "Feature",
       geometry: item.location,
       properties: {
-        name: item.NAME,
+        name: item.name,
         type: item.type,
-        id: item.NID,
+        id: item.id,
+        properties: item.firstClass + "-" + item.secondClass,
       },
     })),
   };
   return geojson;
+}
+// 执行本地模型脚本
+function runPythonScript(lon, lat) {
+  return new Promise((resolve, reject) => {
+    const pythonProcess = spawn("python", [scriptPath]);
+    const input = JSON.stringify({ lon: lon, lat: lat });
+    pythonProcess.stdin.write(input);
+    pythonProcess.stdin.end();
+
+    // 只监听stderr，不监听stdout
+    pythonProcess.stderr.on("data", (data) => {
+      console.error(`stderr: ${data}`);
+    });
+    pythonProcess.stdout.on("data", (data) => {
+      console.log(`stdout: ${data}`);
+    });
+    pythonProcess.on("close", (code) => {
+      if (code !== 0) {
+        reject(new Error(`Python script exited with code ${code}`));
+        return;
+      }
+      console.log(`Python script exited with code ${code}`);
+      resolve();
+    });
+  });
 }
 module.exports = { queryPoint, queryOne, queryScores };
